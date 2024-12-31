@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Escaneo de Productos</title>
+  <title>Escaneo de Códigos de Barras</title>
   
   <!-- Cargar la biblioteca desde el CDN -->
   <script src="https://cdn.jsdelivr.net/npm/html5-qrcode/minified/html5-qrcode.min.js"></script>
@@ -22,7 +22,7 @@
 </head>
 <body>
 
-  <h3>Escanear Código de Barras</h3>
+  <h3>Escanear Códigos de Barras</h3>
   
   <div id="reader"></div>
   
@@ -36,35 +36,36 @@
   <button onclick="enviarDatos()">Registrar Producto</button>
 
   <script>
-    // Esta variable contendrá el código escaneado
     let codigoEscaneado = "";
+    let contadorEscaneados = 0;
 
     // Iniciar el escáner de código de barras
     const html5QrCode = new Html5Qrcode("reader");
-    html5QrCode.start(
-      { facingMode: "environment" },  // Usamos la cámara trasera
-      { fps: 10 },                    // Frecuencia de escaneo
-      (decodedText) => {
-        // Este callback se ejecuta cuando se escanea un código
-        codigoEscaneado = decodedText;
-        document.getElementById("codigo").textContent = decodedText;
-      },
-      (error) => {
-        console.warn("Error al escanear:", error);
-      },
-      // Especificamos los tipos de códigos que queremos leer
-      {
-        formatsToSupport: [
-          Html5QrcodeSupportedFormats.EAN_13,
-          Html5QrcodeSupportedFormats.EAN_8,
-          Html5QrcodeSupportedFormats.UPC_A,
-          Html5QrcodeSupportedFormats.UPC_E,
-          Html5QrcodeSupportedFormats.CODE_128,
-          Html5QrcodeSupportedFormats.CODE_39,
-          Html5QrcodeSupportedFormats.ITF
-        ]
-      }
-    );
+
+    // Configuración del lector para leer varios tipos de códigos de barras
+    const configurarEscaner = () => {
+      html5QrCode.start(
+        { facingMode: "environment" },  // Usamos la cámara trasera
+        { fps: 10 },                    // Frecuencia de escaneo (10 cuadros por segundo)
+        (decodedText) => {
+          // Este callback se ejecuta cuando se escanea un código
+          if (codigoEscaneado !== decodedText) { // Evitar repetir el mismo código
+            codigoEscaneado = decodedText;
+            document.getElementById("codigo").textContent = decodedText;
+
+            // Mostrar mensaje y guardar
+            contadorEscaneados++;
+            console.log(`Código escaneado ${contadorEscaneados}: ${decodedText}`);
+          }
+        },
+        (error) => {
+          console.warn("Error al escanear:", error);
+        }
+      );
+    };
+
+    // Llamada inicial a la función para configurar el escáner
+    configurarEscaner();
 
     // Función para enviar los datos a un endpoint (reemplazar con el tuyo)
     function enviarDatos() {
