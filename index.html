@@ -51,11 +51,11 @@
 
           // Especificar los tipos de códigos de barras a escanear
           const formats = [
-            Html5QrcodeSupportedFormats.EAN_13,
-            Html5QrcodeSupportedFormats.UPC_A,
-            Html5QrcodeSupportedFormats.CODE_128,
-            Html5QrcodeSupportedFormats.CODE_39,
-            Html5QrcodeSupportedFormats.EAN_8
+            "EAN_13",  // EAN 13
+            "UPC_A",   // UPC-A
+            "CODE_128",// Code 128
+            "CODE_39", // Code 39
+            "EAN_8"    // EAN 8
           ];
 
           // Iniciar el escaneo con formatos especificados
@@ -75,6 +75,7 @@
             },
             (error) => {
               console.warn("Error al escanear:", error);
+              alert("Error al escanear: " + error.message);  // Mostrar el mensaje de error
             }
           );
         })
