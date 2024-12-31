@@ -1,11 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Escaneo de Productos</title>
+  
+  <!-- Cargar la biblioteca desde el CDN -->
   <script src="https://cdn.jsdelivr.net/npm/html5-qrcode/minified/html5-qrcode.min.js"></script>
+
   <style>
     #reader {
-      width: 300px;
+      width: 100%;
+      height: 300px;
       margin: auto;
     }
     body {
@@ -15,33 +21,40 @@
   </style>
 </head>
 <body>
+
   <h3>Escanear Código de Barras</h3>
+  
   <div id="reader"></div>
+  
   <p><strong>Código escaneado:</strong> <span id="codigo"></span></p>
+  
   <p>
-    Fecha de vencimiento: 
+    Fecha de vencimiento:
     <input type="date" id="fechaVencimiento">
   </p>
+
   <button onclick="enviarDatos()">Registrar Producto</button>
 
   <script>
-    const endpoint = "TU_URL_DEL_ENDPOINT"; // Cambia esto por la URL del endpoint publicado en Apps Script
-
+    // Esta variable contendrá el código escaneado
     let codigoEscaneado = "";
 
+    // Iniciar el escáner de código de barras
     const html5QrCode = new Html5Qrcode("reader");
     html5QrCode.start(
-      { facingMode: "environment" }, 
-      { fps: 10 },
+      { facingMode: "environment" },  // Usamos la cámara trasera
+      { fps: 10 },                    // Frecuencia de escaneo
       (decodedText) => {
+        // Este callback se ejecuta cuando se escanea un código
         codigoEscaneado = decodedText;
         document.getElementById("codigo").textContent = decodedText;
       },
       (error) => {
-        console.error("Error al escanear:", error);
+        console.warn("Error al escanear:", error);
       }
     );
 
+    // Función para enviar los datos a un endpoint (reemplazar con el tuyo)
     function enviarDatos() {
       const fechaVencimiento = document.getElementById("fechaVencimiento").value;
 
@@ -55,19 +68,25 @@
         return;
       }
 
-      fetch(endpoint, {
+      // Enviar los datos a tu endpoint (puedes usar tu Google Apps Script)
+      fetch('TU_ENDPOINT_AQUI', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ codigo: codigoEscaneado, fechaVencimiento }),
+        body: JSON.stringify({
+          codigo: codigoEscaneado,
+          fechaVencimiento: fechaVencimiento
+        }),
       })
         .then(response => response.text())
         .then(data => {
           alert(data);
+          // Limpiar los campos
           document.getElementById("codigo").textContent = "";
           document.getElementById("fechaVencimiento").value = "";
         })
         .catch(error => alert("Error al enviar los datos: " + error.message));
     }
   </script>
+
 </body>
 </html>
