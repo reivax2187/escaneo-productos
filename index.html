@@ -39,29 +39,44 @@
     let codigoEscaneado = "";
     let contadorEscaneados = 0;
 
+    // Verificar si la biblioteca está cargada
+    if (typeof Html5Qrcode === 'undefined') {
+      alert("Error: La biblioteca Html5Qrcode no se cargó correctamente.");
+    }
+
     // Iniciar el escáner de código de barras
     const html5QrCode = new Html5Qrcode("reader");
 
     // Configuración del lector para leer varios tipos de códigos de barras
     const configurarEscaner = () => {
-      html5QrCode.start(
-        { facingMode: "environment" },  // Usamos la cámara trasera
-        { fps: 10 },                    // Frecuencia de escaneo (10 cuadros por segundo)
-        (decodedText) => {
-          // Este callback se ejecuta cuando se escanea un código
-          if (codigoEscaneado !== decodedText) { // Evitar repetir el mismo código
-            codigoEscaneado = decodedText;
-            document.getElementById("codigo").textContent = decodedText;
+      // Verificación del estado de la cámara antes de intentar iniciar
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(() => {
+          console.log("Cámara detectada y habilitada");
+          // Iniciar el escaneo
+          html5QrCode.start(
+            { facingMode: "environment" },  // Usamos la cámara trasera
+            { fps: 10 },                    // Frecuencia de escaneo (10 cuadros por segundo)
+            (decodedText) => {
+              // Este callback se ejecuta cuando se escanea un código
+              if (codigoEscaneado !== decodedText) { // Evitar repetir el mismo código
+                codigoEscaneado = decodedText;
+                document.getElementById("codigo").textContent = decodedText;
 
-            // Mostrar mensaje y guardar
-            contadorEscaneados++;
-            console.log(`Código escaneado ${contadorEscaneados}: ${decodedText}`);
-          }
-        },
-        (error) => {
-          console.warn("Error al escanear:", error);
-        }
-      );
+                // Mostrar mensaje y guardar
+                contadorEscaneados++;
+                console.log(`Código escaneado ${contadorEscaneados}: ${decodedText}`);
+              }
+            },
+            (error) => {
+              console.warn("Error al escanear:", error);
+            }
+          );
+        })
+        .catch((error) => {
+          console.error("Error al acceder a la cámara: ", error);
+          alert("No se pudo acceder a la cámara. Asegúrate de que los permisos estén habilitados.");
+        });
     };
 
     // Llamada inicial a la función para configurar el escáner
