@@ -39,24 +39,29 @@
     let codigoEscaneado = "";
     let contadorEscaneados = 0;
 
-    // Verificar si la biblioteca está cargada
-    if (typeof Html5Qrcode === 'undefined') {
-      alert("Error: La biblioteca Html5Qrcode no se cargó correctamente.");
-    }
-
     // Iniciar el escáner de código de barras
     const html5QrCode = new Html5Qrcode("reader");
 
-    // Configuración del lector para leer varios tipos de códigos de barras
+    // Configuración del lector para leer varios tipos de códigos de barras (EAN, UPC, Code 128, etc.)
     const configurarEscaner = () => {
       // Verificación del estado de la cámara antes de intentar iniciar
       navigator.mediaDevices.getUserMedia({ video: true })
         .then(() => {
           console.log("Cámara detectada y habilitada");
-          // Iniciar el escaneo
+
+          // Especificar los tipos de códigos de barras a escanear
+          const formats = [
+            Html5QrcodeSupportedFormats.EAN_13,
+            Html5QrcodeSupportedFormats.UPC_A,
+            Html5QrcodeSupportedFormats.CODE_128,
+            Html5QrcodeSupportedFormats.CODE_39,
+            Html5QrcodeSupportedFormats.EAN_8
+          ];
+
+          // Iniciar el escaneo con formatos especificados
           html5QrCode.start(
             { facingMode: "environment" },  // Usamos la cámara trasera
-            { fps: 10 },                    // Frecuencia de escaneo (10 cuadros por segundo)
+            { fps: 10, formats: formats }, // Frecuencia de escaneo y formatos de código de barras
             (decodedText) => {
               // Este callback se ejecuta cuando se escanea un código
               if (codigoEscaneado !== decodedText) { // Evitar repetir el mismo código
