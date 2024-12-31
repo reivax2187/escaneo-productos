@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Escaneo de Productos</title>
+  <title>Escaneo de Códigos de Barras Javi</title>
   
   <!-- Cargar la biblioteca desde el CDN -->
   <script src="https://cdn.jsdelivr.net/npm/html5-qrcode/minified/html5-qrcode.min.js"></script>
@@ -36,10 +36,7 @@
   <button onclick="enviarDatos()">Registrar Producto</button>
 
   <script>
-    // Esta variable contendrá el código escaneado
     let codigoEscaneado = "";
-    
-    // Contador para los códigos escaneados
     let contadorEscaneados = 0;
 
     // Iniciar el escáner de código de barras
@@ -49,7 +46,7 @@
     const configurarEscaner = () => {
       html5QrCode.start(
         { facingMode: "environment" },  // Usamos la cámara trasera
-        { fps: 10 },                    // Frecuencia de escaneo
+        { fps: 10 },                    // Frecuencia de escaneo (10 cuadros por segundo)
         (decodedText) => {
           // Este callback se ejecuta cuando se escanea un código
           if (codigoEscaneado !== decodedText) { // Evitar repetir el mismo código
