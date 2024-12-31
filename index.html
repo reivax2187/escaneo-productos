@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Escaneo de Códigos de Barras</title>
+  <title>Escaneo de Productos</title>
   
   <!-- Cargar la biblioteca desde el CDN -->
   <script src="https://cdn.jsdelivr.net/npm/html5-qrcode/minified/html5-qrcode.min.js"></script>
@@ -36,7 +36,10 @@
   <button onclick="enviarDatos()">Registrar Producto</button>
 
   <script>
+    // Esta variable contendrá el código escaneado
     let codigoEscaneado = "";
+    
+    // Contador para los códigos escaneados
     let contadorEscaneados = 0;
 
     // Iniciar el escáner de código de barras
@@ -46,7 +49,7 @@
     const configurarEscaner = () => {
       html5QrCode.start(
         { facingMode: "environment" },  // Usamos la cámara trasera
-        { fps: 10 },                    // Frecuencia de escaneo (10 cuadros por segundo)
+        { fps: 10 },                    // Frecuencia de escaneo
         (decodedText) => {
           // Este callback se ejecuta cuando se escanea un código
           if (codigoEscaneado !== decodedText) { // Evitar repetir el mismo código
@@ -60,6 +63,17 @@
         },
         (error) => {
           console.warn("Error al escanear:", error);
+        },
+        {
+          formatsToSupport: [
+            Html5QrcodeSupportedFormats.EAN_13,
+            Html5QrcodeSupportedFormats.EAN_8,
+            Html5QrcodeSupportedFormats.UPC_A,
+            Html5QrcodeSupportedFormats.UPC_E,
+            Html5QrcodeSupportedFormats.CODE_128,
+            Html5QrcodeSupportedFormats.CODE_39,
+            Html5QrcodeSupportedFormats.ITF
+          ]
         }
       );
     };
